@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+    <title>Energy in the United States</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    
+    <link href="css/demo_table.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+     <link href="css/mainstyle.css" rel="stylesheet">
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    
+   
+  </head>
+
+  <body>
+
+    
+   <div class="container">
+  
+   <div id="intro">
+   <h1>Energy Consumption and Production in the U.S.</h1>
+   		<p>The major energy sources that the United States consumes are oil/petroleum,
+   		 natural gas, coal, nuclear electric power, and renewable energy. According to data
+   		 from the U.S. Energy Information Administration, more oil/petroleum is consumed than
+   		 any other energy resource.</p>
+   </div>
+    	
+
+	<div class="part1">
+			<div id="chart"></div>
+			<p class="note">Energy production in the United States meets most of the United States energy
+			demand. In 2012, the energy produced by the United States met approximately 83% of 
+			the nation's energy needs.</p>
+			
+	</div>
+	<div class="part2">
+			<div id="chart2"></div>
+			<div class = "row" id="mid">
+				<div class="col-md-6" id="smchart">
+				<table id="small_table"></table>
+				</div>
+				<div class="col-md-6" id="smtable">
+		  	<p class="note">As the United States has grown, so has our energy consumption. Here is a closer look
+		  	of how much of each type of energy source the United States consumes. Though the use of
+		  	renewable energy has slowly but steadily increased, the main energy sources that are consumed
+		  	are fossil fuels. </p>
+		<p class="note">Note: No data available for Geothermal, Solar, or Wind energy sources for 1949.</p>
+		<p class="note">Note: No data available for Solar or Wind energy sources for 1980.</p>
+		  		</div>
+	</div>
+	</div>	
+		<div id="part3">
+		<h2>Annual Energy Overview Data</h2>
+		<p class="note">This data table gives an overview of energy production and consumption
+		in the United States. <p>
+		<p class="note">All amounts are in Quadrillion Btu.<p>
+        <table id="large_table"></table>
+    
+         </div> 
+    </div><!-- /.container -->
+         <p class="source">Source: U.S. Energy Information Administration </p>
+
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="js/jquery.dataTables.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script> 
+   <script>
+    aaData = new Array;
+    aaData2 = new Array;
+    year = new Array;
+    totalproduction = new Array;
+    totalconsumption = new Array;
+    
+      $(document).ready(function() {
+	
+        startLoadXml();
+      });
+      
+      function startLoadXml() {
+  $.ajax({
+    type: "GET",
+    url: "EnergyOverviewData.xml",
+    dataType: "xml",
+    success: parseXml
+  });
+  $.ajax({
+    type: "GET",
+    url: "EnergyConsumptionData.xml",
+    dataType: "xml",
+    success: function(xml) {
+    $(xml).find("#consumption").each(function(index)
+  {
+  consume = new Array;
+  consume.push($(this).find("year").text(), parseInt($(this).find("Coal").text()), parseInt($(this).find("NaturalGas").text()), parseInt($(this).find("Oil").text()), parseInt($(this).find("NuclearElectric").text()), parseInt($(this).find("Hydroelectric").text()), parseInt($(this).find("Geothermal").text()), parseInt($(this).find("Solar").text()), parseInt($(this).find("Wind").text()), parseInt($(this).find("Biomass").text()));
+
+  aaData2.push(consume);
+   });
+aoColumns2 = new Array;
+aoColumns2 = [{ "sTitle": "Year" }, { "sTitle": "Coal" },  { "sTitle": "Natural Gas" },  { "sTitle": "Oil" }, { "sTitle": "Nuclear Electric " }, { "sTitle": "Hydroelectric" }, { "sTitle": "Geothermal" }, { "sTitle": "Solar" }, { "sTitle": "Wind" }, { "sTitle": "Biomass" }];
+
+
+$("#small_table").html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="table"></table>' );	
+  $('#small_table').dataTable( {
+  "aaData": aaData2,
+  "aoColumns" : aoColumns2
+  });
+  }    
+  });
+} //close loadXML
+function parseXml(xml){
+  $(xml).find("record").each(function(index) {		
+year.push($(this).find("year").text());
+totalproduction.push(parseInt($(this).find("totalPrimaryProd").text()));
+totalconsumption.push(parseInt($(this).find("totalPrimaryConsump").text()));
+writeChart1();
+writeChart2();
+energyArray = new Array;
+energyArray.push($(this).find("year").text(), $(this).find("totalFossilProd").text(), $(this).find("nucElecProd").text(), $(this).find("totalRenewProd").text(), $(this).find("totalPrimaryProd").text(), $(this).find("PrimaryImports").text(), $(this).find("PrimaryExports").text(), $(this).find("PrimaryNetImports").text(), $(this).find("PrimaryStockChange").text(), $(this).find("totalFossilConsump").text(), $(this).find("nucElecConsump").text(), $(this).find("totalRenewConsump").text(), $(this).find("totalPrimaryConsump").text() );
+aaData.push(energyArray);
+  });
+aoColumns = new Array;
+aoColumns = [{ "sTitle": "Year" },  { "sTitle": "Total Fossil Fuels Production" },  { "sTitle": "Nuclear Electric Power Production" }, { "sTitle": "Total Renewable Energy Production" }, { "sTitle": "Total Primary Energy Production" }, { "sTitle": "Primary Energy Imports" }, { "sTitle": "Primary Energy Exports" }, { "sTitle": "Primary Energy Net Imports" }, { "sTitle": "Primary Energy Stock Change and Other" }, { "sTitle": "Total Fossil Fuels Consumption" }, { "sTitle": "Nuclear Electric Power Consumption" }, { "sTitle": "Total Renewable Energy Consumption" }, { "sTitle": "Total Primary Energy Consumption" }];
+//console.log(aoColumns);
+
+$("#large_table").html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="table"></table>' );	
+
+  $('#large_table').dataTable( {
+  "aaData": aaData,
+  "aoColumns" : aoColumns
+  });
+}
+
+function writeChart1() {
+var chart1 = new Highcharts.Chart({
+         colors: [
+        'gray', 
+         '#33CC66'],
+        chart: {
+            renderTo: 'chart',
+            type: 'column'
+       },
+        title: {
+            text: 'Total Energy Consumption vs Total Energy Production'
+        },
+        xAxis: {
+            categories: year
+        },
+        yAxis: {
+            title: {
+                text: 'Amount (Quadrillion Btu)'
+            }
+            
+        },
+        series: [{
+           name: 'Total Consumption',
+            data: totalconsumption
+        }, {
+            name: 'Total Production',
+            data: totalproduction
+        }]
+ });
+
+}
+function writeChart2() {
+var chart2 = new Highcharts.Chart({
+		colors : [
+		'gray', 
+         '#33CC66',
+         '#3399CC'
+		],
+        chart: {
+            renderTo: 'chart2',
+            type: 'column'
+       },
+        title: {
+            text: 'Energy Consumption in 1949, 1980 and 2013'
+        },
+        xAxis: {
+            categories: ['Coal', 'Natural Gas', 'Oil', 'Total Fossil Fuels', 'Nuclear Electric' , 'Hydroelectric' , 'Geothermal' , 'Solar', 'Wind', 'Biomass', 'Total Renewable Energy', 'Total Primary Energy']
+        },
+        yAxis: {
+            title: {
+                text: 'Amount (Quadrillion Btu)'
+            }
+        },
+        series: [{
+           name: '1949',
+            data: [1.980905, 5.145142, 11.882722, 29.002099, 0, 1.424722, 0, 0, 0, 1.549262, 2.973984, 31.981503]
+        }, {
+            name: '1980',
+            data: [15.422809, 20.235459, 34.20452, 69.827758, 2.739169, 2.900144, 0.052699, 0, 0, 2.4755, 5.428342, 78.066668]
+        }, {
+            name: '2013',
+            data: [17.997139, 26.627175, 35.099362, 79.706254, 8.268104, 2.561102, 0.220674, 0.320373, 1.595499, 4.486855, 9.184503, 97.337404]
+        }]
+ });
+
+}
+ </script>
+    
+    
+  </body>
+</html>
