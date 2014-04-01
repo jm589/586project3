@@ -1,0 +1,67 @@
+body {
+font-family:Poynter;
+font-size: 12pt;
+padding-top: 10px;
+
+}
+
+.container {
+padding: 10px;
+
+}
+
+h1 {
+font-size: 32pt;
+font-weight: bold;
+text-align: center;
+font-family: "Poynter Condensed";
+color: #3399CC;
+font-style: normal;
+}
+h2 {
+color: #3399CC;
+}
+ td {
+ padding: 4px;
+ }
+.part2 {
+border-bottom: 2px dotted gray;
+padding-bottom: 10px;
+margin-bottom: 10px;
+}
+.part1 {
+border-bottom: 2px dotted gray;
+padding-bottom: 10px;
+margin-bottom: 10px;
+}
+
+
+#intro {
+border-bottom: 2px dotted gray;
+padding-bottom: 10px;
+margin-bottom: 10px;
+font-style: italic;
+}
+.note {
+font-style: italic;
+}
+
+#smtable {
+padding-top: 10px;
+
+}
+
+.source {
+font-style: italic;
+text-align: center;
+
+}
+thead {
+background-color: #3399CC;
+}
+@media (max-width: 600px) {
+table {
+width: 100%;
+font-size: 8pt;
+}
+}
